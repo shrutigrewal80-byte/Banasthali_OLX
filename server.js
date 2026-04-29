@@ -318,9 +318,9 @@ app.post('/update-profile-details', (req, res) => {
 });
 
 // ------------------- START SERVER -------------------
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000; // Render 10000 prefer karta hai
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server is LIVE on port ${PORT}`);
-    console.log(`✅ SARE ROUTES READY HAIN! External phod dena!`);
+    console.log(`🚀 Server is running on port ${PORT}`);
+    console.log(`✅ Ready for External Exam!`);
 });
