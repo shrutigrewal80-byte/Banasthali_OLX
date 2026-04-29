@@ -22,55 +22,21 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 if (!fs.existsSync('./uploads')) fs.mkdirSync('./uploads');
-
-mongoose.connect('mongodb://127.0.0.1:27017/banasthali_olx')
-    .then(() => console.log('✅ MongoDB Connected'))
+// Localhost hata kar ye Atlas link dalo
+mongoose.connect('mongodb+srv://shruti_admin:radhe_radhe@cluster0.oo11flx.mongodb.net/banasthali_olx?retryWrites=true&w=majority')
+    .then(() => console.log('✅ MongoDB Atlas Connected (Cloud)'))
     .catch(err => console.error('❌ DB Error:', err));
 
 const SENDER_EMAIL = 'banasthalimarketplaces@gmail.com'; 
 const SENDER_PASS = 'volfmrjjyhrkxwes'; 
 let otpStore = {}; 
 
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-
-// 1. Cloudinary Configure karo (Apni details dalo)
-cloudinary.config({
-    cloud_name: 'YOUR_CLOUD_NAME', 
-    api_key: 'YOUR_API_KEY',
-    api_secret: 'YOUR_API_SECRET'
+const storage = multer.diskStorage({
+    destination: './uploads/',
+    filename: (req, file, cb) => cb(null, 'FILE-' + Date.now() + path.extname(file.originalname))
 });
-
-// 2. Cloudinary Storage Setup
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'banasthali_olx', // Cloudinary mein is naam ka folder ban jayega
-        allowed_formats: ['jpg', 'png', 'jpeg'],
-    },
-});
-
 const uploadMulti = multer({ storage: storage }).array('images', 5);
 const uploadSingle = multer({ storage: storage }).single('profilePic');
-
-// 3. Add Product Route mein Change
-app.post('/add-product', (req, res) => {
-    uploadMulti(req, res, async (err) => {
-        if (err) return res.json({ success: false, message: "Upload error" });
-        try {
-            // Cloudinary direct URL deta hai, localhost ki zaroorat nahi
-            const imageUrls = req.files ? req.files.map(f => f.path) : [];
-            
-            const p = new Product({ 
-                // ... baki sab same rahega
-                images: imageUrls,
-                // ...
-            });
-            await p.save();
-            res.json({ success: true, message: "Item uploaded to Cloudinary!" });
-        } catch (e) { res.json({ success: false, message: e.message }); }
-    });
-});
 
 // ------------------- ADMIN LOGIN -------------------
 app.post('/admin/login', async (req, res) => {
