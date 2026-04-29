@@ -1,4 +1,4 @@
-const API_URL = window.location.origin
+const API_URL = 'http://localhost:5000';
 let allProducts = [];
 let currentRole = 'student';
 
