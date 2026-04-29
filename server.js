@@ -101,14 +101,27 @@ app.post('/send-otp', (req, res) => {
 });
 
 // ------------------- REGISTER -------------------
+// ------------------- REGISTER (WITH BACKUP OTP) -------------------
 app.post('/register', async (req, res) => {
     const { email, otp, password, name, course, year, contact, hostel } = req.body;
-    if (parseInt(otpStore[email]) !== parseInt(otp)) return res.json({ success: false, message: "Invalid OTP" });
+    
+    // BACKUP: Agar email nahi ja raha, toh '123456' dalkar register ho jayega
+    const isBackupOTP = (otp === '123456');
+    const isRealOTP = (otpStore[email] && parseInt(otpStore[email]) === parseInt(otp));
+
+    if (!isBackupOTP && !isRealOTP) {
+        return res.json({ success: false, message: "Invalid OTP" });
+    }
+    
     try {
         const newUser = new User({ name, email, password, course, year, contact, hostel });
-        await newUser.save(); delete otpStore[email];
-        res.json({ success: true });
-    } catch (e) { res.json({ success: false, message: "User already exists." }); }
+        await newUser.save(); 
+        delete otpStore[email]; // OTP use hone ke baad delete kar do
+        res.json({ success: true, message: "Registration Successful!" });
+    } catch (e) { 
+        console.log("Register Error:", e.message);
+        res.json({ success: false, message: "User already exists or Server Error" }); 
+    }
 });
 
 // ------------------- ADMIN DATA -------------------
