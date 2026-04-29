@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <nav class="sidebar">
+            <div style="text-align:center; margin-bottom:20px;">
+                <img src="https://upload.wikimedia.org/wikipedia/en/8/86/Banasthali_Vidyapith_Logo.png" width="60" style="margin-bottom:10px;">
+                <h3 style="color:#800000; margin:0;">Banasthali_OLX</h3>
+            </div>
+            <div class="user-mini-profile" style="margin:20px 0; background:#fff5f5; padding:10px; border-radius:10px; display:flex; gap:10px; align-items:center;">
+                <img id="sideProfileImg" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                <div id="sideName" style="font-size:14px; font-weight:bold;">Student</div>
+            </div>
+            <ul class="nav-links">
+                <li onclick="switchTab('market', this)" class="active"><i class="fas fa-store"></i> Marketplace</li>
+                <li onclick="switchTab('mylistings', this)"><i class="fas fa-box-open"></i> My Products</li>
+                <li onclick="switchTab('profile', this)"><i class="fas fa-user"></i> Profile</li>
+            </ul>
+            <button onclick="logout()" class="logout-btn">Logout</button>
+        </nav>
+
+        <div class="content-area">
+            <div id="marketSection" class="tab-section active">
+                <div class="hero-banner"><div><h1>Hello, <span id="welcomeName">Student</span>!</h1><p>Buy & Sell safely on Campus.</p></div><button onclick="openModal('sellModal')" class="primary-btn" style="background:white; color:#800000; width:auto; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.1);">+ Sell Item</button></div>
+                <div class="search-container"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Search..." onkeyup="filterProducts()"></div>
+                <div class="category-row">
+                    <div class="cat-pill active" onclick="filterCategory('All', this)">All</div>
+                    <div class="cat-pill" onclick="filterCategory('Books', this)">Books</div>
+                    <div class="cat-pill" onclick="filterCategory('Cycles', this)">Cycles</div>
+                    <div class="cat-pill" onclick="filterCategory('Uniform', this)">Uniform</div>
+                    <div class="cat-pill" onclick="filterCategory('Electronics', this)">Electronics</div>
+                </div>
+                <div id="marketGrid" class="grid-container"></div>
+            </div>
+
+            <div id="mylistingsSection" class="tab-section">
+                <h2>My Listings</h2><div id="myGrid" class="grid-container"></div>
+            </div>
+
+            <div id="profileSection" class="tab-section">
+                <div class="table-box" style="max-width:600px; margin:0 auto; text-align:center; padding:40px; border-top:5px solid var(--maroon);">
+                    <img id="profImgDisplay" src="" style="width:120px; height:120px; border-radius:50%; border:4px solid #800000; object-fit:cover;">
+                    <h2 id="profNameDisplay" style="margin:10px 0;">Name</h2><p id="profEmailDisplay" style="color:#777;">Email</p>
+                    <div id="viewMode" style="margin-top:20px; text-align:left;">
+                        <div class="detail-row" style="padding:12px; border-bottom:1px solid #eee; background:#f9f9f9; margin-bottom:5px; border-radius:5px;">Course: <strong id="dCourse" style="float:right;">-</strong></div>
+                        <div class="detail-row" style="padding:12px; border-bottom:1px solid #eee; background:#f9f9f9; margin-bottom:5px; border-radius:5px;">Year: <strong id="dYear" style="float:right;">-</strong></div>
+                        <div class="detail-row" style="padding:12px; border-bottom:1px solid #eee; background:#f9f9f9; margin-bottom:5px; border-radius:5px;">Hostel: <strong id="dHostel" style="float:right;">-</strong></div>
+                        <div class="detail-row" style="padding:12px; border-bottom:1px solid #eee; background:#f9f9f9; margin-bottom:5px; border-radius:5px;">Contact: <strong id="dContact" style="float:right;">-</strong></div>
+                        <center><button onclick="toggleEditMode()" class="primary-btn" style="margin-top:25px; width:auto;">Edit Profile</button></center>
+                    </div>
+                    <form id="editMode" style="display:none; text-align:left; margin-top:20px;" onsubmit="updateProfile(event)" enctype="multipart/form-data">
+                        <label style="font-size:12px; color:gray; font-weight:bold;">Update Profile Picture:</label>
+                        <input type="file" id="editProfilePic" class="input-field" accept="image/*">
+                        <input type="text" id="editName" class="input-field" placeholder="Name">
+                        <input type="text" id="editCourse" class="input-field" placeholder="Course">
+                        <input type="text" id="editYear" class="input-field" placeholder="Year">
+                        <input type="text" id="editHostel" class="input-field" placeholder="Hostel">
+                        <input type="text" id="editContact" class="input-field" placeholder="Contact">
+                        <button type="submit" class="primary-btn">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="productViewModal" class="modal-overlay">
+        <div class="glass-modal" style="width:500px;">
+            <span onclick="closeModal('productViewModal')" class="close-btn">&times;</span>
+            <h3 id="viewTitle" style="margin-bottom: 10px; color:var(--maroon);">Item Name</h3>
+            <div class="slider-container">
+                <button class="slider-btn left" onclick="changeSlide(-1)">&#10094;</button>
+                <img id="viewImage" class="slider-img" src="">
+                <button class="slider-btn right" onclick="changeSlide(1)">&#10095;</button>
+            </div>
+            <div class="slider-dots" id="sliderDots"></div>
+            <h2 id="viewPrice" style="color:var(--maroon); font-size:28px;">₹0</h2>
+            <div style="background:#f4f7fe; padding:15px; border-radius:8px; margin-bottom:10px; font-size:14px; border-left:4px solid var(--maroon);">
+                <p><strong><i class="fas fa-user"></i> Seller:</strong> <span id="viewSellerName"></span> &nbsp; | &nbsp; <strong><i class="fas fa-building"></i> Hostel:</strong> <span id="viewHostel"></span></p>
+                <hr style="border:0; height:1px; background:#ddd; margin:10px 0;">
+                <p style="color:#444; line-height:1.5;" id="viewDesc">Description here</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="sellModal" class="modal-overlay">
+        <div class="glass-modal"><span onclick="closeModal('sellModal')" class="close-btn">&times;</span>
+            <h3 style="color:var(--maroon); text-align:center; margin-bottom:20px;">Post an Ad</h3>
+            <form onsubmit="postAd(event)">
+                <input type="text" id="prodTitle" class="input-field" placeholder="Ad Title (e.g., Engineering Drawing Kit)" required>
+                <select id="prodCondition" class="input-field"><option value="New">Like New</option><option value="Good" selected>Good Condition</option><option value="Fair">Fair / Used</option></select>
+                
+                <select id="prodCategory" class="input-field" onchange="toggleCustomCategory()">
+                    <option>Books</option><option>Cycles</option><option>Uniform</option><option>Electronics</option><option value="Other">Other (Type Below)</option>
+                </select>
+                <input type="text" id="prodCustomCategory" class="input-field" placeholder="Type your category..." style="display:none;">
+                
+                <textarea id="prodDesc" class="input-field" placeholder="Write a detailed description of your item..." style="height:100px;" required></textarea>
+                <input type="number" id="prodPrice" class="input-field" placeholder="Selling Price (₹)" required>
+                <label style="font-size:12px; color:gray; font-weight:bold;">Upload Photos (Required, Max 5):</label>
+                <input type="file" id="prodImage" class="input-field" multiple accept="image/*" required>
+                
+                <button type="submit" class="primary-btn" style="margin-top:15px;">Submit for Approval</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="editAdModal" class="modal-overlay">
+        <div class="glass-modal"><span onclick="closeModal('editAdModal')" class="close-btn">&times;</span>
+            <h3>Edit Ad</h3>
+            <form onsubmit="submitEditAd(event)">
+                <input type="hidden" id="editAdId">
+                <input type="text" id="updTitle" class="input-field" placeholder="Title" required>
+                <select id="updCondition" class="input-field"><option value="New">Like New</option><option value="Good">Good Condition</option><option value="Fair">Fair / Used</option></select>
+                <select id="updCategory" class="input-field"><option>Books</option><option>Cycles</option><option>Uniform</option><option>Electronics</option><option>Others</option></select>
+                <textarea id="updDesc" class="input-field" placeholder="Description" required></textarea>
+                <input type="number" id="updPrice" class="input-field" placeholder="Price" required>
+                <label style="font-size:12px; color:gray;">Add More Photos (Optional):</label>
+                <input type="file" id="updImage" class="input-field" multiple accept="image/*">
+                <button type="submit" class="primary-btn">Update Ad</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="handoverModal" class="modal-overlay"><div class="glass-modal"><span onclick="closeModal('handoverModal')" class="close-btn">&times;</span><h3>Confirm Deal</h3><form onsubmit="submitHandover(event)"><input type="hidden" id="hoProductId"><input type="number" id="hoPrice" class="input-field" placeholder="Final Deal Price (₹)" required><input list="locations" id="hoLocation" class="input-field" placeholder="Meeting Spot (e.g. KV Gate)" required><button type="submit" class="primary-btn" style="background:green;">Request Handover</button></form></div></div>
+    <div id="reportModal" class="modal-overlay"><div class="glass-modal"><span onclick="closeModal('reportModal')" class="close-btn">&times;</span><h3>Report Item/User</h3><form onsubmit="submitComplaint(event)"><input type="hidden" id="repTargetId"><input type="hidden" id="repProductId"><input type="hidden" id="repName"><textarea id="repReason" class="input-field" placeholder="Please provide reason..." required></textarea><button type="submit" class="primary-btn" style="background:#d32f2f;">Submit Report</button></form></div></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

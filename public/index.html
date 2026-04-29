@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banasthali OLX | Exclusive Campus Marketplace</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="landing-body">
+    
+    <nav class="landing-nav">
+        <div class="logo-container">
+            <img src="https://upload.wikimedia.org/wikipedia/en/8/86/Banasthali_Vidyapith_Logo.png" alt="Banasthali Logo" class="nav-logo">
+            <h2>Banasthali<span style="color:#d32f2f;">_OLX</span></h2>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="#" onclick="showLandingSection('home')">Home</a></li>
+            <li><a href="#" onclick="showLandingSection('about')">About Us</a></li>
+            <li><button class="nav-login-btn" onclick="showLandingSection('auth')">Login / Register</button></li>
+        </ul>
+    </nav>
+
+    <div id="main-content">
+        
+        <section id="home-section" class="landing-section active-section">
+            <div class="hero-container">
+                <div class="hero-text">
+                    <h1>Your Campus. <br><span style="color:var(--maroon);">Your Marketplace.</span></h1>
+                    <p>Buy, sell, and exchange books, cycles, electronics, and essentials securely with your fellow Banasthalites. Exclusive access for verified university students only.</p>
+                    <div class="hero-buttons">
+                        <button class="primary-btn btn-large" onclick="showLandingSection('auth')">Get Started Now <i class="fas fa-arrow-right"></i></button>
+                        <button class="secondary-btn btn-large" onclick="showLandingSection('about')">Learn More</button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3081/3081648.png" alt="Shopping Illustration">
+                </div>
+            </div>
+        </section>
+
+        <section id="about-section" class="landing-section" style="display:none;">
+            <div class="about-container">
+                <h1 style="color:var(--maroon); text-align:center; font-size:36px; margin-bottom:20px;">About Banasthali_OLX</h1>
+                <div class="about-card">
+                    <p style="font-size:18px; line-height:1.8; color:#444; text-align:justify;">
+                        Designed exclusively for the proud students of <strong>Banasthali Vidyapith</strong>, our platform bridges the gap between seniors and juniors, creating a sustainable and affordable ecosystem within the campus walls.
+                        <br><br>
+                        Whether you are moving out of your hostel and need to sell your cycle, or you are a fresher looking for affordable course books and lab coats, <strong>Banasthali_OLX</strong> is your one-stop destination. 
+                    </p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-box">
+                        <i class="fas fa-shield-alt feature-icon"></i>
+                        <h3>100% Secure</h3>
+                        <p>Access is restricted strictly to verified <b>@banasthali.in</b> email addresses to ensure a safe environment.</p>
+                    </div>
+                    <div class="feature-box">
+                        <i class="fas fa-handshake feature-icon"></i>
+                        <h3>Peer-to-Peer</h3>
+                        <p>Directly chat with buyers and sellers on WhatsApp and meet securely at designated campus handover spots.</p>
+                    </div>
+                    <div class="feature-box">
+                        <i class="fas fa-leaf feature-icon"></i>
+                        <h3>Sustainable</h3>
+                        <p>Pass on your old books, drafters, and cycles. Promote a culture of reuse and eco-friendly living on campus.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="auth-section" class="landing-section" style="display:none;">
+            <div class="auth-wrapper">
+                <div class="login-box">
+                    <div class="role-selector">
+                        <button id="btnStudent" class="role-btn active" onclick="switchRole('student')">Student</button>
+                        <button id="btnAdmin" class="role-btn" onclick="switchRole('admin')">Admin</button>
+                    </div>
+                    
+                    <h2 id="formTitle" style="color:var(--maroon); text-align:center;">Student Login</h2>
+                    
+                    <form id="loginForm" onsubmit="handleLogin(event)">
+                        <input type="email" id="loginEmail" class="input-field" placeholder="University Email (@banasthali.in)" required>
+                        <input type="password" id="loginPassword" class="input-field" placeholder="Password" required>
+                        <button type="submit" class="primary-btn">Login</button>
+                        <p id="signupLinkText" class="toggle-link">New here? <span onclick="showSignup()">Create an account</span></p>
+                    </form>
+
+                    <form id="signupForm" style="display:none;">
+                        <div id="signupStep1">
+                            <input type="text" id="regName" class="input-field" placeholder="Full Name" required>
+                            <input type="email" id="regEmail" class="input-field" placeholder="Email (@banasthali.in)" required>
+                            <input type="text" id="regCourse" class="input-field" placeholder="Course (e.g. B.Tech CS)" required>
+                            <input type="text" id="regYear" class="input-field" placeholder="Year (e.g. 2nd Year)" required>
+                            <input type="text" id="regHostel" class="input-field" placeholder="Hostel Name" required>
+                            <input type="tel" id="regPhone" class="input-field" placeholder="WhatsApp Number" required>
+                            <input type="password" id="regPassword" class="input-field" placeholder="Create Password" required>
+                            <button type="button" class="primary-btn" onclick="sendOTP()">Send OTP</button>
+                            <p id="otpStatus" style="text-align:center; color:green; margin-top:5px; font-weight:bold;"></p>
+                        </div>
+                        <div id="signupStep2" style="display:none; margin-top:15px;">
+                            <input type="text" id="otpInput" class="input-field" placeholder="Enter OTP" required>
+                            <button type="button" class="primary-btn" onclick="verifyAndRegister()" style="background-color:green;">Verify & Register</button>
+                        </div>
+                        <p class="toggle-link">Already have an account? <span onclick="showLogin()">Login</span></p>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

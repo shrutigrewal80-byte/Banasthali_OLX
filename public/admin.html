@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <nav class="sidebar">
+            <h3 style="color:#800000; margin-bottom:30px;">Admin Panel</h3>
+            <ul class="nav-links">
+                <li onclick="switchAdminTab('overview', this)" class="active"><i class="fas fa-chart-pie"></i> Dashboard</li>
+                <li onclick="switchAdminTab('allads', this)"><i class="fas fa-boxes"></i> All Live Ads</li>
+                <li onclick="switchAdminTab('users', this)"><i class="fas fa-users"></i> Users</li>
+                <li onclick="switchAdminTab('deals', this)"><i class="fas fa-handshake"></i> Successful Deals</li>
+                <li onclick="switchAdminTab('deleted', this)"><i class="fas fa-trash"></i> Deleted Items</li>
+                <li onclick="switchAdminTab('reports', this)"><i class="fas fa-flag"></i> Reports</li>
+                <li onclick="switchAdminTab('chats', this)"><i class="fas fa-comments"></i> Chat Proofs</li>
+            </ul>
+            <button onclick="logout()" class="logout-btn">Logout</button>
+        </nav>
+        <div class="content-area">
+            <div id="overviewSection" class="tab-section active">
+                <div class="stats-row">
+                    <div class="stat-card">Total Users <h2 id="totalUsers">0</h2></div>
+                    <div class="stat-card" style="border-bottom:4px solid green;">Active Ads <h2 id="activeAds">0</h2></div>
+                    <div class="stat-card" style="border-bottom:4px solid orange;">Pending <h2 id="pendingAds">0</h2></div>
+                    <div class="stat-card" style="border-bottom:4px solid purple;">Items Sold <h2 id="totalSalesCount">0</h2></div>
+                </div>
+                <div class="table-box"><h3>Pending Items for Approval</h3><table class="styled-table" id="pendingTable"><thead><tr><th>Image</th><th>Seller</th><th>Item Name</th><th>Price</th><th>Action</th></tr></thead><tbody></tbody></table></div>
+            </div>
+
+            <div id="alladsSection" class="tab-section"><div class="table-box"><h3>All Live Approved Ads</h3><table class="styled-table" id="allAdsTable"><thead><tr><th>Image</th><th>Item Name</th><th>Seller</th><th>Price</th><th>Date</th><th>Action</th></tr></thead><tbody></tbody></table></div></div>
+            
+            <div id="usersSection" class="tab-section"><div class="table-box"><h3>All Registered Users</h3><table class="styled-table" id="usersTable"><thead><tr><th>Name</th><th>Email</th><th>Course</th><th>Items Posted</th><th>Action</th><th>Profile</th></tr></thead><tbody></tbody></table></div></div>
+
+            <div id="dealsSection" class="tab-section">
+                <div class="table-box">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                        <h3>Successful Deals History</h3>
+                        <div><input type="text" id="searchSeller" placeholder="🔍 Search Seller..." onkeyup="filterDeals()" style="padding:8px;"><input type="text" id="searchBuyer" placeholder="🔍 Search Buyer..." onkeyup="filterDeals()" style="padding:8px; margin-left:10px;"></div>
+                    </div>
+                    <table class="styled-table" id="dealsTable">
+                        <thead>
+                            <tr>
+                                <th>IMAGE</th>
+                                <th>ITEM NAME</th>
+                                <th>SELLER</th>
+                                <th>BUYER</th>
+                                <th>FINAL PRICE</th>
+                                <th>DATE</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="deletedSection" class="tab-section"><div class="table-box"><h3>Deleted Items (By User or Admin)</h3><table class="styled-table" id="deletedTable"><thead><tr><th>Item Name</th><th>Deleted By (Seller)</th><th>Contact</th><th>Original Price</th><th>Date Deleted</th></tr></thead><tbody></tbody></table></div></div>
+            <div id="reportsSection" class="tab-section"><div class="table-box"><h3>Reports</h3><table class="styled-table" id="reportsTable"><thead><tr><th>Reporter</th><th>Target Name</th><th>Reason</th></tr></thead><tbody></tbody></table></div></div>
+            <div id="chatsSection" class="tab-section"><div class="table-box"><h3>Chat Logs (Proof)</h3><table class="styled-table" id="chatLogsTable"><thead><tr><th>Product</th><th>Buyer (Sender)</th><th>Seller (Receiver)</th><th>Message</th><th>Date</th></tr></thead><tbody></tbody></table></div></div>
+        </div>
+    </div>
+
+    <div id="userDetailsModal" class="modal-overlay">
+        <div class="glass-modal" style="width: 700px; max-height:80vh; overflow-y:auto;">
+            <span onclick="closeModal('userDetailsModal')" class="close-btn">&times;</span>
+            <h3 id="popUserName">User Details</h3>
+            <div class="user-info-card" id="popUserInfo"></div>
+            <h4>User's Ads History</h4>
+            <table class="styled-table" style="margin-top:10px;" id="popUserAdsTable"><thead><tr><th>Image</th><th>Item</th><th>Status</th><th>Price</th></tr></thead><tbody></tbody></table>
+        </div>
+    </div>
+
+    <div id="dealViewModal" class="modal-overlay">
+        <div class="glass-modal" style="width: 500px; text-align:center;">
+            <span onclick="closeModal('dealViewModal')" class="close-btn">&times;</span>
+            <h3 style="margin-bottom:15px; color:green;">Deal Successfully Locked 🤝</h3>
+            <img id="dealPopImg" src="" onerror="this.src='https://via.placeholder.com/400x200?text=No+Image'" style="width:100%; height:250px; object-fit:cover; border-radius:10px; margin-bottom:15px;">
+            <h2 id="dealPopTitle">Item Name</h2>
+            <h1 style="color:var(--maroon); margin:10px 0;" id="dealPopPrice">₹0</h1>
+            <div style="background:#f4f7fe; padding:15px; border-radius:8px; text-align:left; font-size:14px; line-height:1.6;">
+                <p><strong>Seller:</strong> <span id="dealPopSeller"></span></p>
+                <p><strong>Buyer:</strong> <span id="dealPopBuyer"></span></p>
+                <p><strong>Handover Location:</strong> <span id="dealPopLoc"></span></p>
+                <p><strong>Date Completed:</strong> <span id="dealPopDate"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
