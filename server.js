@@ -318,7 +318,9 @@ app.post('/update-profile-details', (req, res) => {
 });
 
 // ------------------- START SERVER -------------------
-app.listen(PORT, () => {
-    console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-    console.log(`✅ SARE ROUTES READY HAIN! Aag laga do!`);
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server is LIVE on port ${PORT}`);
+    console.log(`✅ SARE ROUTES READY HAIN! External phod dena!`);
 });
