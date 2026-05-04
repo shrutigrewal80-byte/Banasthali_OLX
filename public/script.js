@@ -190,15 +190,27 @@ document.addEventListener('DOMContentLoaded', () => {
             for(let i=0; i < fileInput.files.length; i++) { fd.append('images', fileInput.files[i]); }
             
             await fetch(`${API_URL}/update-product/${id}`, {method:'POST', body:fd});
-            alert("Ad Updated! Sent for Admin Approval."); window.closeModal('editAdModal'); location.reload();
+            alert("Ad Updated!."); window.closeModal('editAdModal'); location.reload();
         };
 
-        window.delItem = async (id) => { 
-            if(confirm("Are you sure you want to delete this?")) { 
-                await fetch(`${API_URL}/delete-product/${id}`, {method:'DELETE'}); 
+      window.delItem = async (id) => { 
+    if(confirm("Are you sure you want to delete this?")) { 
+        try {
+            const res = await fetch(`${API_URL}/delete-product/${id}`, { method: 'DELETE' }); 
+            const data = await res.json();
+            
+            if(data.success) {
+                alert("Item deleted successfully!");
                 location.reload(); 
-            } 
-        };
+            } else {
+                alert("Failed to delete item: " + data.message);
+            }
+        } catch (err) {
+            console.error("Fetch Error:", err);
+            alert("Network/Server Crash Error: " + err.message);
+        }
+    } 
+};
 
         window.openReportModal = async (sellerId, productId, targetName) => {
             window.openModal('reportModal'); document.getElementById('repTargetId').value = sellerId;

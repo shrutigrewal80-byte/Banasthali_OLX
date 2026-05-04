@@ -15,16 +15,21 @@ const Admin = require('./models/Admin');
 const Deal = require('./models/Deal'); 
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 10000;
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 if (!fs.existsSync('./uploads')) fs.mkdirSync('./uploads');
-// Localhost hata kar ye Atlas link dalo
-mongoose.connect('mongodb+srv://shruti_admin:radhe_radhe@cluster0.oo11flx.mongodb.net/banasthali_olx?retryWrites=true&w=majority')
-    .then(() => console.log('✅ MongoDB Atlas Connected (Cloud)'))
+
+// MongoDB Atlas ko hata kar ye dalo (Compass ke liye)
+// Local MongoDB Compass Connection
+// Compass wala link hata kar Atlas dalo
+const MONGO_URI = 'mongodb+srv://shruti_admin:radhe_radhe@cluster0.oo11flx.mongodb.net/banasthali_olx?retryWrites=true&w=majority';
+
+mongoose.connect(MONGO_URI)
+    .then(() => console.log('✅ Connected to MongoDB Atlas'))
     .catch(err => console.error('❌ DB Error:', err));
 
 const SENDER_EMAIL = 'banasthalimarketplaces@gmail.com'; 
@@ -170,7 +175,7 @@ app.post('/add-product', (req, res) => {
         try {
             if (!req.body.sellerId) return res.json({ success: false, message: "Seller ID is required!" });
 
-            const imageUrls = req.files && req.files.length > 0 ? req.files.map(f => 'http://localhost:5000/uploads/' + f.filename) : [];
+            const imageUrls = req.files.map(f => '/uploads/' + f.filename);
             const p = new Product({ 
                 title: req.body.title || 'Untitled', price: Number(req.body.price) || 0, category: req.body.category || 'Others', 
                 description: req.body.description || '', condition: req.body.condition || 'Good',
@@ -210,13 +215,32 @@ app.post('/update-product/:id', (req, res) => {
                 title: req.body.title || p.title, price: req.body.price || p.price, category: req.body.category || p.category,
                 condition: req.body.condition || p.condition, description: req.body.description || p.description
             };
-            if (req.files && req.files.length > 0) updateData.images = req.files.map(f => 'http://localhost:5000/uploads/' + f.filename);
+            if (req.files && req.files.length > 0) updateData.images = req.files.map(f => '/uploads/' + f.filename);
             await Product.findByIdAndUpdate(req.params.id, updateData);
             res.json({ success: true, message: "Product updated successfully!" });
         } catch (e) { res.json({ success: false, message: "Server error" }); }
     });
 });
 
+// ------------------- DELETE PRODUCT (STUDENT) -------------------
+app.delete('/delete-product/:id', async (req, res) => {
+    try {
+        console.log("Delete request aayi is ID ke liye: ", req.params.id); // Debugging
+        
+        const product = await Product.findByIdAndUpdate(req.params.id, { isDeleted: true });
+        
+        if(product) {
+            console.log("✅ Item delete ho gaya!");
+            res.json({ success: true, message: "Item deleted successfully!" });
+        } else {
+            console.log("❌ Item nahi mila DB mein!");
+            res.json({ success: false, message: "Item not found!" });
+        }
+    } catch (e) { 
+        console.log("🔥 BACKEND ERROR: ", e.message); // Terminal me asli error dikhega
+        res.json({ success: false, message: "Backend error: " + e.message }); 
+    }
+});
 // ========================================================
 // 🚨 SARE NAYE ROUTES YAHAN HAIN (MARK BOUGHT, DELETE, ETC)
 // ========================================================
@@ -310,7 +334,7 @@ app.post('/update-profile-details', (req, res) => {
         if (err) return res.json({ success: false });
         try {
             const updateData = { name: req.body.name, course: req.body.course, year: req.body.year, hostel: req.body.hostel, contact: req.body.contact };
-            if (req.file) updateData.profilePic = 'http://localhost:5000/uploads/' + req.file.filename;
+            if (req.file) updateData.profilePic = '/uploads/' + req.file.filename;
             const user = await User.findOneAndUpdate({ email: req.body.email }, updateData, { new: true });
             res.json({ success: true, user });
         } catch (e) { res.json({ success: false }); }
@@ -318,9 +342,12 @@ app.post('/update-profile-details', (req, res) => {
 });
 
 // ------------------- START SERVER -------------------
-const PORT = process.env.PORT || 10000; // Render 10000 prefer karta hai
+// --- LOCALHOST PRESENTATION CONFIG ---
+
+
+// Images ko browser mein dikhane ke liye static folder setup
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
-    console.log(`✅ Ready for External Exam!`);
+    console.log(`🚀 Server running on port ${PORT}`);
 });

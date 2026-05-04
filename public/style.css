@@ -168,3 +168,30 @@ button, .nav-links li, .stat-card, .btn-action { cursor: pointer !important; pos
 .auth-wrapper { display: flex; justify-content: center; align-items: center; min-height: 80vh; padding: 40px; }
 
 @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+
+/* Container ko responsive banane ke liye */
+.container {
+    width: 95%;
+    margin: auto;
+}
+
+/* Products grid ko mobile mein 2 aur desktop mein 4 column karne ke liye */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Mobile default */
+    gap: 10px;
+}
+
+@media (min-width: 768px) {
+    .product-grid {
+        grid-template-columns: repeat(4, 1fr); /* Desktop view */
+    }
+}
+
+/* Images ko box se bahar jane se rokne ke liye */
+img {
+    max-width: 100%;
+    height: auto;
+}
+ 
+.product-card { width: 100%; box-sizing: border-box; }
