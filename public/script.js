@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000';
+const API_URL = '[https://banasthali-olx.onrender.com](https://banasthali-olx.onrender.com)';
 let allProducts = [];
 let currentRole = 'student';
 
