@@ -22,9 +22,9 @@ const PORT = process.env.PORT || 10000;
 // --- CLOUDINARY CONFIGURATION ---
 // Inhe Render Dashboard -> Environment Variables mein daalna
 cloudinary.config({ 
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dlsqjgb68', 
-  api_key: process.env.CLOUDINARY_API_KEY || '658982783727195', 
-  api_secret: process.env.CLOUDINARY_API_SECRET || 'WPSuh4e9JlZCO3dEhGoTCLTMngA' 
+  cloud_name: 'dlsqjgb68', 
+  api_key: '658982783727195', 
+  api_secret: 'WPSuh4e9JlZCO3dEhGoTCLTMngA' 
 });
 
 const storage = new CloudinaryStorage({
